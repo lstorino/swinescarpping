@@ -1,0 +1,93 @@
+,pais,data,preco,moeda,unidade,variacao,referencia
+0,Belgium - Danis,30 Jul,0.960,EUR,kg, 2.1%,
+1,Denmark,30 Jul,10.50,DKK,kg, 0%,
+2,France - MPB,27 Jul,1.293,EUR,kg, 0%,
+3,Germany,29 Jul,1.470,EUR,kg, 0%,
+4,Italy,30 Jul,1.275,EUR,kg, 3.2%,
+5,Netherlands - Beursprijs,24 Jul,1.050,EUR,kg, 0%,
+6,Poland,24 Jul,6.261,PLN,kg, 6.6%,
+7,Romania,24 Jul,536.79,RON,100kg, 2.0%,
+8,Russia,22 Jul,120.40,RUB,kg, 2.6%,
+9,Spain - Lleida,30 Jul,1.300,EUR,kg, 0%,
+10,United Kingdom,25 Jul,165.18,GBX,kg, 0.3%,
+11,Ukraine,3 Jul,43.60,UAH,kg, 2.1%,
+12,Argentine,24 Jul,60.51,ARS,kg, 3.0%,
+13,Brazil - Paraná,27 Jul,6.050,BRL,kg, 16.3%,
+14,Brazil - Santa Catarina,30 Jul,6.340,BRL,kg, 2.6%,
+15,Canada - Ontario,24 Jul,119.70,CAD,100kg, 4.3%,
+16,Canada - Quebec,24 Jul,157.35,CAD,100kg, 2.7%,
+17,Chile,31 Jul,1280,CLP,kg, 0%,
+18,Colombia,31 Jul,5465,COP,kg, 1.4%,
+19,Mexico - Sonora,31 Jul,25.40,MXN,kg, 4.2%,
+20,USA - Iowa/Minnesota,31 Jul,40.94,USD,cwt, 0.7%,
+21,China,22 Jul,36.81,CNY,kg, 0.1%,
+22,South Korea,31 Jul,4138,KRW,kg, 7.5%,
+23,Belgium - Danis,30 Jul,0.960,EUR,kg, 2.1%,
+24,Denmark,30 Jul,10.50,DKK,kg, 0%,
+25,France - MPB,27 Jul,1.293,EUR,kg, 0%,
+26,Germany,29 Jul,1.470,EUR,kg, 0%,
+27,Italy,30 Jul,1.275,EUR,kg, 3.2%,
+28,Netherlands - Beursprijs,24 Jul,1.050,EUR,kg, 0%,
+29,Poland,24 Jul,6.261,PLN,kg, 6.6%,
+30,Romania,24 Jul,536.79,RON,100kg, 2.0%,
+31,Russia,22 Jul,120.40,RUB,kg, 2.6%,
+32,Spain - Lleida,30 Jul,1.300,EUR,kg, 0%,
+33,United Kingdom,25 Jul,165.18,GBX,kg, 0.3%,
+34,Ukraine,3 Jul,43.60,UAH,kg, 2.1%,
+35,Argentine,24 Jul,60.51,ARS,kg, 3.0%,
+36,Brazil - Paraná,27 Jul,6.050,BRL,kg, 16.3%,
+37,Brazil - Santa Catarina,30 Jul,6.340,BRL,kg, 2.6%,
+38,Canada - Ontario,24 Jul,119.70,CAD,100kg, 4.3%,
+39,Canada - Quebec,24 Jul,157.35,CAD,100kg, 2.7%,
+40,Chile,31 Jul,1280,CLP,kg, 0%,
+41,Colombia,31 Jul,5465,COP,kg, 1.4%,
+42,Mexico - Sonora,31 Jul,25.40,MXN,kg, 4.2%,
+43,USA - Iowa/Minnesota,31 Jul,40.94,USD,cwt, 0.7%,
+44,China,22 Jul,36.81,CNY,kg, 0.1%,
+45,South Korea,31 Jul,4138,KRW,kg, 7.5%,
+46,Belgium - Danis,30 Jul,0.960,EUR,kg, 2.1%,
+47,Denmark,30 Jul,10.50,DKK,kg, 0%,
+48,France - MPB,27 Jul,1.293,EUR,kg, 0%,
+49,Germany,29 Jul,1.470,EUR,kg, 0%,
+50,Italy,30 Jul,1.275,EUR,kg, 3.2%,
+51,Netherlands - Beursprijs,24 Jul,1.050,EUR,kg, 0%,
+52,Poland,24 Jul,6.261,PLN,kg, 6.6%,
+53,Romania,24 Jul,536.79,RON,100kg, 2.0%,
+54,Russia,22 Jul,120.40,RUB,kg, 2.6%,
+55,Spain - Lleida,30 Jul,1.300,EUR,kg, 0%,
+56,United Kingdom,25 Jul,165.18,GBX,kg, 0.3%,
+57,Ukraine,3 Jul,43.60,UAH,kg, 2.1%,
+58,Argentine,24 Jul,60.51,ARS,kg, 3.0%,
+59,Brazil - Paraná,27 Jul,6.050,BRL,kg, 16.3%,
+60,Brazil - Santa Catarina,30 Jul,6.340,BRL,kg, 2.6%,
+61,Canada - Ontario,24 Jul,119.70,CAD,100kg, 4.3%,
+62,Canada - Quebec,24 Jul,157.35,CAD,100kg, 2.7%,
+63,Chile,31 Jul,1280,CLP,kg, 0%,
+64,Colombia,31 Jul,5465,COP,kg, 1.4%,
+65,Mexico - Sonora,31 Jul,25.40,MXN,kg, 4.2%,
+66,USA - Iowa/Minnesota,31 Jul,40.94,USD,cwt, 0.7%,
+67,China,22 Jul,36.81,CNY,kg, 0.1%,
+68,South Korea,31 Jul,4138,KRW,kg, 7.5%,
+69,Belgium - Danis,30 Jul,0.960,EUR,kg, 2.1%,Live
+70,Denmark,30 Jul,10.50,DKK,kg, 0%,Carcass 60%
+71,France - MPB,27 Jul,1.293,EUR,kg, 0%,Carcass 56 TMV
+72,Germany,29 Jul,1.470,EUR,kg, 0%,Carcass 57%
+73,Italy,30 Jul,1.275,EUR,kg, 3.2%,160/176 kg Live
+74,Netherlands - Beursprijs,24 Jul,1.050,EUR,kg, 0%,Live
+75,Poland,24 Jul,6.261,PLN,kg, 6.6%,Carcass 57%
+76,Romania,24 Jul,536.79,RON,100kg, 2.0%,Live
+77,Russia,22 Jul,120.40,RUB,kg, 2.6%,Live
+78,Spain - Lleida,30 Jul,1.300,EUR,kg, 0%,Live
+79,United Kingdom,25 Jul,165.18,GBX,kg, 0.3%,SPP Euro Spec
+80,Ukraine,3 Jul,43.60,UAH,kg, 2.1%,Live
+81,Argentine,24 Jul,60.51,ARS,kg, 3.0%,Live
+82,Brazil - Paraná,27 Jul,6.050,BRL,kg, 16.3%,Live
+83,Brazil - Santa Catarina,30 Jul,6.340,BRL,kg, 2.6%,Live
+84,Canada - Ontario,24 Jul,119.70,CAD,100kg, 4.3%,Carcass
+85,Canada - Quebec,24 Jul,157.35,CAD,100kg, 2.7%,Carcass
+86,Chile,31 Jul,1280,CLP,kg, 0%,Live
+87,Colombia,31 Jul,5465,COP,kg, 1.4%,Live
+88,Mexico - Sonora,31 Jul,25.40,MXN,kg, 4.2%,Live
+89,USA - Iowa/Minnesota,31 Jul,40.94,USD,cwt, 0.7%,Carcass
+90,China,22 Jul,36.81,CNY,kg, 0.1%,Live
+91,South Korea,31 Jul,4138,KRW,kg, 7.5%,Carcass
