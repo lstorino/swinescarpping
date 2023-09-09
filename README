@@ -1,0 +1,5 @@
+This is a simple code to scrap prices of pig at the get
+convert them into a common weight basis and bringing the 
+updated price in American dolar (USD) everytime you run it
+This has all been writen in Pandas with the support of  other python 
+libraries
