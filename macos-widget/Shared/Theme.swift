@@ -23,14 +23,15 @@ enum Theme {
 
   /// Maps an ISO country code to an emoji flag — zero image assets, zero
   /// network, renders at any size. Fallback is a neutral flag.
+  /// Regional Indicator A..Z = U+1F1E6..U+1F1FF, i.e. 0x1F1E6 + (letter - 'A').
   static func flagEmoji(_ code: String) -> String {
-    guard code.count == 2 else { return "🏳️" }
-    let base: UInt32 = 127397 // regional indicator A minus 'A' (65)
-    var scalars = ""
-    for ch in code.uppercased().unicodeScalars where ch.value >= 65 && ch.value <= 90 {
-      guard let combined = UnicodeScalar(base + ch.value - 65) else { return "🏳️" }
-      scalars.unicodeScalars.append(combined)
-    }
-    return scalars.unicodeScalars.count == 2 ? scalars : "🏳️"
+    let upper = code.uppercased()
+    guard upper.count == 2,
+          let first = upper.first?.unicodeScalars.first,
+          let last = upper.last?.unicodeScalars.first,
+          (65...90).contains(first.value), (65...90).contains(last.value),
+          let s1 = UnicodeScalar(0x1F1E6 + first.value - 65),
+          let s2 = UnicodeScalar(0x1F1E6 + last.value - 65) else { return "🏳️" }
+    return String(String.UnicodeScalarView([s1, s2]))
   }
 }
