@@ -21,8 +21,14 @@ import time
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(ROOT, "scraper"))
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(HERE)
+# repo layout: backend/server.py -> ../scraper; docker layout: /app/server.py
+# -> ./scraper. Probe both so the same file runs unmodified in each.
+for _cand in (os.path.join(ROOT, "scraper"), os.path.join(HERE, "scraper")):
+    if os.path.exists(os.path.join(_cand, "pig333.py")):
+        sys.path.insert(0, _cand)
+        break
 import pig333  # noqa: E402
 
 DB_PATH = os.environ.get("PIG_DB", os.path.join(os.path.dirname(__file__), "data", "pigprices.db"))
