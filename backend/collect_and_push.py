@@ -6,6 +6,8 @@ IPs, so collection must come from a residential IP. Stdlib only.
   python3 collect_and_push.py            # scrape + push
   python3 collect_and_push.py --dry-run  # scrape only, print summary
 """
+from __future__ import annotations  # NAS python is 3.8: keep annotations lazy
+
 import json
 import os
 import ssl
