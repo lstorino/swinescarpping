@@ -172,6 +172,9 @@ def latest_payload() -> dict:
         )
         rows = [dict(r) for r in cur.fetchall()]
         total = conn.execute("SELECT COUNT(*) FROM history").fetchone()[0]
+        last = conn.execute("SELECT MAX(scraped_at) FROM history").fetchone()[0]
+        if last:
+            LAST_PUSH[0] = last
     finally:
         conn.close()
     return {
