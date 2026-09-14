@@ -1,0 +1,16 @@
+services:
+  pigprices:
+    build: .
+    image: pigprices:latest
+    container_name: pigprices
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8902:8902"
+    env_file: .env
+    volumes:
+      - ./data:/data
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
