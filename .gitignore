@@ -1,0 +1,13 @@
+# macOS / exFAT noise
+.DS_Store
+._*
+*.AppleDouble
+
+# python
+__pycache__/
+*.pyc
+.venv/
+
+# swift build noise
+build/
+*.xcuserdata
