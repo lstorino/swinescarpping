@@ -1,0 +1,36 @@
+name: PigWidget
+options:
+  bundleIdPrefix: co.maytek.pigs
+  createIntermediateGroups: true
+
+targets:
+  PigWidget:
+    type: application
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - path: PigWidget
+      - path: Shared
+    info:
+      path: PigWidget/Info.plist
+      properties:
+        NSPrincipalClass: NSApplication
+        LSUIElement: true
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: co.maytek.pigs.widget
+        GENERATE_INFOPLIST_FILE: NO
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: "Apple Development"
+        DEVELOPMENT_TEAM: 7B4L2VDC9R
+        CODE_SIGN_ENTITLEMENTS: PigWidget/PigWidget.entitlements
+        CODE_SIGNING_REQUIRED: YES
+        CODE_SIGNING_ALLOWED: YES
+        SWIFT_VERSION: "5.9"
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
+      resources:
+        - path: PigWidget/Resources

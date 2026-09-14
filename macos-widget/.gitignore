@@ -1,0 +1,2 @@
+# Secrets.swift holds the read-only widget token; never commit it.
+Shared/Secrets.swift
