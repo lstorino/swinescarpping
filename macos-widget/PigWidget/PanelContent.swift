@@ -7,10 +7,11 @@ final class PanelViewModel: ObservableObject {
   @Published var lastUpdated: Date?
 
   private var timer: Timer?
+  private var fastRetry: Timer?
 
   init() {
-    // Data changes 2x/day; 30 min is generous. Keeps the widget cheap on
-    // every run (1 GET to our own endpoint).
+    // Steady state: data changes 2x/day; 30 min is generous and keeps the
+    // widget cheap on every run. Failure with no data: fast 60s retries.
     timer = Timer.scheduledTimer(withTimeInterval: 1800, repeats: true) { [weak self] _ in
       Task { @MainActor in self?.refresh() }
     }
@@ -25,8 +26,16 @@ final class PanelViewModel: ObservableObject {
           self.payload = payload
           self.failed = false
           self.lastUpdated = Date()
+          self.fastRetry?.invalidate()
+          self.fastRetry = nil
         case .failure:
           self.failed = true
+          if self.payload == nil {
+            self.fastRetry?.invalidate()
+            self.fastRetry = Timer.scheduledTimer(withTimeInterval: 60, repeats: false) { [weak self] _ in
+              Task { @MainActor in self?.refresh() }
+            }
+          }
         }
       }
     }

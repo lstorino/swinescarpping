@@ -31,6 +31,6 @@ enum Theme {
       guard let combined = UnicodeScalar(base + ch.value - 65) else { return "🏳️" }
       scalars.unicodeScalars.append(combined)
     }
-    return scalars.count == 2 ? scalars : "🏳️"
+    return scalars.unicodeScalars.count == 2 ? scalars : "🏳️"
   }
 }

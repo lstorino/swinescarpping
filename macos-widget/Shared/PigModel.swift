@@ -6,6 +6,12 @@ struct PricesPayload: Decodable {
   let generatedAt: String
   let totalHistoryRows: Int
   let markets: [Market]
+
+  enum CodingKeys: String, CodingKey {
+    case generatedAt = "generated_at"
+    case totalHistoryRows = "total_history_rows"
+    case markets
+  }
 }
 
 struct Market: Decodable, Identifiable {
@@ -71,14 +77,26 @@ enum PricesLoader {
     let url = URL(string: "\(apiBase)/prices.json?token=\(Secrets.token)")!
     var request = URLRequest(url: url)
     request.timeoutInterval = 15
-    URLSession.shared.dataTask(with: request) { data, _, error in
-      if let error { return completion(.failure(error)) }
-      guard let data,
-            let payload = try? JSONDecoder().decode(PricesPayload.self, from: data) else {
-        return completion(.failure(NSError(domain: "PigWidget", code: 1,
-                                           userInfo: [NSLocalizedDescriptionKey: "invalid response"])))
+    URLSession.shared.dataTask(with: request) { data, response, error in
+      if let error {
+        NSLog("[PigWidget] transport error: \(error.localizedDescription)")
+        return completion(.failure(error))
       }
-      completion(.success(payload))
+      guard let data else {
+        NSLog("[PigWidget] empty response")
+        return completion(.failure(NSError(domain: "PigWidget", code: 2,
+                                           userInfo: [NSLocalizedDescriptionKey: "empty response"])))
+      }
+      do {
+        let payload = try JSONDecoder().decode(PricesPayload.self, from: data)
+        completion(.success(payload))
+      } catch {
+        NSLog("[PigWidget] decode error: \(error)")
+        if let http = response as? HTTPURLResponse {
+          NSLog("[PigWidget] http status: \(http.statusCode), body: \(String(data: data, encoding: .utf8) ?? "<binary>")")
+        }
+        completion(.failure(error))
+      }
     }.resume()
   }
 }
