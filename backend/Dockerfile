@@ -8,6 +8,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY scraper/pig333.py /app/scraper/pig333.py
 COPY backend/server.py /app/server.py
+COPY backend/status_page.py /app/status_page.py
+COPY backend/flags /app/flags
 
 ENV PIG_DB=/data/pigprices.db
 RUN mkdir -p /data

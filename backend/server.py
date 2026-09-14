@@ -30,10 +30,13 @@ for _cand in (os.path.join(ROOT, "scraper"), os.path.join(HERE, "scraper")):
         sys.path.insert(0, _cand)
         break
 import pig333  # noqa: E402
+import status_page  # noqa: E402  (sits next to server.py in both layouts)
 
 DB_PATH = os.environ.get("PIG_DB", os.path.join(os.path.dirname(__file__), "data", "pigprices.db"))
 TOKEN = os.environ.get("PIG_TOKEN", "")
 PORT = int(os.environ.get("PIG_PORT", "8902"))
+FLAG_DIR = os.path.join(HERE, "flags")
+LAST_PUSH: list[str | None] = [None]
 
 
 def utcnow() -> str:
@@ -187,8 +190,82 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(payload)
 
+    def _html(self, code: int, body: str, headers: list[tuple[str, str]] | None = None):
+        payload = body.encode()
+        self.send_response(code)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(payload)))
+        for h in headers or []:
+            self.send_header(*h)
+        self.end_headers()
+        self.wfile.write(payload)
+
+    def _redirect(self, loc: str, headers: list[tuple[str, str]] | None = None):
+        self.send_response(302)
+        self.send_header("Location", loc)
+        for h in headers or []:
+            self.send_header(*h)
+        self.end_headers()
+
+    def _session_ok(self) -> bool:
+        return status_page.check_session(self.headers.get("Cookie"))
+
+    def _flags(self):
+        m = re.match(r"^/flags/([a-z]{2})\.svg$", self.path)
+        if not m:
+            self._send(404, {"error": "no such flag"})
+            return
+        path = os.path.join(FLAG_DIR, f"{m.group(1)}.svg")
+        if not os.path.exists(path):
+            self._send(404, {"error": "no such flag"})
+            return
+        payload = open(path, "rb").read()
+        self.send_response(200)
+        self.send_header("Content-Type", "image/svg+xml")
+        self.send_header("Cache-Control", "public, max-age=604800")
+        self.send_header("Content-Length", str(len(payload)))
+        self.end_headers()
+        self.wfile.write(payload)
+
     def do_GET(self):  # noqa: N802
-        # token check: ?token= or X-Pig-Token header
+        path = self.path.split("?")[0]
+
+        if path == "/" or path == "/index.html":
+            if self._session_ok():
+                payload = latest_payload()
+                self._html(200, status_page.dashboard_page(
+                    payload["markets"], payload["total_history_rows"],
+                    payload["generated_at"], LAST_PUSH[0] or "never"))
+            else:
+                self._html(200, status_page.login_page())
+        elif path == "/logout":
+            self._redirect("/", [("Set-Cookie", "pigsess=; Max-Age=0; Path=/")])
+        elif path.startswith("/flags/"):
+            self._flags()
+        else:
+            self._api_get()
+
+    def do_POST(self):  # noqa: N802
+        path = self.path.split("?")[0]
+        if path == "/login":
+            length = int(self.headers.get("Content-Length", "0"))
+            form = self.rfile.read(length).decode("utf-8", "replace")
+            key = ""
+            for pair in form.split("&"):
+                k, _, v = pair.partition("=")
+                if k == "key":
+                    key = v
+            if status_page.check_key(key):
+                self._redirect("/", [("Set-Cookie",
+                                      f"pigsess={status_page.make_session()}; "
+                                      "Max-Age=604800; Path=/; HttpOnly")])
+            else:
+                self._html(200, status_page.login_page("wrong key"))
+        else:
+            self._api_post()
+
+    # --- API routes (token-protected) ---
+    def _api_get(self):
         m = re.search(r"[?&]token=([^&]+)", self.path)
         tok = m.group(1) if m else (self.headers.get("X-Pig-Token") or "")
         if TOKEN and tok != TOKEN:
@@ -198,11 +275,11 @@ class Handler(BaseHTTPRequestHandler):
         if self.path.startswith("/prices.json") or self.path.startswith("/prices"):
             self._send(200, latest_payload())
         elif self.path.startswith("/health"):
-            self._send(200, {"ok": True, "time": utcnow()})
+            self._send(200, {"ok": True, "time": utcnow(), "last_push": LAST_PUSH[0]})
         else:
             self._send(404, {"error": "not found"})
 
-    def do_POST(self):  # noqa: N802
+    def _api_post(self):
         m = re.search(r"[?&]token=([^&]+)", self.path)
         tok = m.group(1) if m else (self.headers.get("X-Pig-Token") or "")
         if TOKEN and tok != TOKEN:
@@ -226,6 +303,7 @@ class Handler(BaseHTTPRequestHandler):
                     self._send(400, {"ok": False, "error": "no rows"})
                     return
                 summary = ingest_rows(rows)
+                LAST_PUSH[0] = utcnow()
                 self._send(200, {"ok": True, **summary})
             except Exception as e:  # noqa: BLE001
                 self._send(500, {"ok": False, "error": str(e)})
