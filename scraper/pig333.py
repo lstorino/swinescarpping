@@ -16,7 +16,10 @@ import json
 import re
 import urllib.request
 
-from scrapling import Selector
+try:
+    from scrapling import Selector  # tiers 1-2 when available
+except ImportError:  # stdlib-only mode (NAS, containers without scrapling)
+    Selector = None
 
 PIG333_URL = "https://www.pig333.com/markets_and_prices/"
 FX_URL = "https://open.er-api.com/v6/latest/USD"
@@ -102,12 +105,12 @@ def fetch_fx() -> dict[str, float]:
     return FX_RATES
 
 
-def fetch_page() -> tuple[Selector, str]:
+def fetch_page() -> tuple["Selector | None", str]:
     """Return (parsed page, raw html) — tier 3 needs the raw string."""
     req = urllib.request.Request(PIG333_URL, headers={"User-Agent": UA})
     with urllib.request.urlopen(req, timeout=30) as r:
         html = r.read().decode("utf-8", errors="replace")
-    return Selector(html), html
+    return (Selector(html) if Selector else None), html
 
 
 # ---------------------------------------------------------------------------
@@ -183,7 +186,9 @@ def parse_blocks(html: str, region: str, category: str) -> list[dict]:
     return markets
 
 
-def _region_slice_tier2(page: Selector, region: str) -> str | None:
+def _region_slice_tier2(page: "Selector | None", region: str) -> str | None:
+    if page is None:
+        return None
     """Tier 2: content-anchored location of a region card via Scrapling."""
     try:
         heads = page.find_by_text(region, first_match=True)
@@ -202,7 +207,7 @@ def _region_slice_tier2(page: Selector, region: str) -> str | None:
     return None
 
 
-def parse_all(page: Selector, raw_html: str) -> list[dict]:
+def parse_all(page: "Selector | None", raw_html: str) -> list[dict]:
     """Full parse: every region, every category — three tiers."""
     rows: list[dict] = []
 

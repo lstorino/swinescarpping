@@ -110,6 +110,44 @@ def run_scrape() -> dict:
     return {"scraped_at": now, "markets": len(rows)}
 
 
+def ingest_rows(rows: list[dict]) -> dict:
+    """Upsert a snapshot pushed by a home-side collector (NAS)."""
+    required = {"market_id", "region", "category", "flag", "country", "date",
+                "price", "currency", "unit", "usd_per_kg", "reference"}
+    now = utcnow()
+    conn = db()
+    try:
+        with conn:
+            for r in rows:
+                missing = required - set(r)
+                if missing:
+                    raise ValueError(f"row missing fields: {missing}")
+                conn.execute(
+                    "INSERT INTO markets (market_id, country, region, category, flag) "
+                    "VALUES (?,?,?,?,?) ON CONFLICT(market_id) DO UPDATE SET "
+                    "country=excluded.country, region=excluded.region, "
+                    "category=excluded.category, flag=excluded.flag",
+                    (r["market_id"], r["country"], r["region"], r["category"], r["flag"]),
+                )
+                conn.execute(
+                    "INSERT INTO history (market_id, price_date, scraped_at, price, "
+                    "currency, unit, usd_per_kg, reference, variation, delta, delta_class) "
+                    "VALUES (?,?,?,?,?,?,?,?,?,?,?) "
+                    "ON CONFLICT(market_id, price_date) DO UPDATE SET "
+                    "scraped_at=excluded.scraped_at, price=excluded.price, "
+                    "currency=excluded.currency, unit=excluded.unit, "
+                    "usd_per_kg=excluded.usd_per_kg, reference=excluded.reference, "
+                    "variation=excluded.variation, delta=excluded.delta, "
+                    "delta_class=excluded.delta_class",
+                    (r["market_id"], r["date"], now, r["price"], r["currency"], r["unit"],
+                     r["usd_per_kg"], r["reference"], r.get("variation", ""),
+                     r.get("delta", ""), r.get("delta_class", "")),
+                )
+    finally:
+        conn.close()
+    return {"scraped_at": now, "markets": len(rows)}
+
+
 # ---------------------------------------------------------------------------
 # API — token-protected, mirrors Nestor's widget endpoint shape
 # ---------------------------------------------------------------------------
@@ -173,6 +211,21 @@ class Handler(BaseHTTPRequestHandler):
         if self.path.startswith("/scrape"):
             try:
                 summary = run_scrape()
+                self._send(200, {"ok": True, **summary})
+            except Exception as e:  # noqa: BLE001
+                self._send(500, {"ok": False, "error": str(e)})
+        elif self.path.startswith("/ingest"):
+            # Home-side collector (NAS) pushes a snapshot it scraped locally —
+            # pig333 blocks datacenter IPs, so collection happens on the home
+            # network and history still lands in this DB.
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length) or b"{}")
+                rows = payload.get("rows", [])
+                if not rows:
+                    self._send(400, {"ok": False, "error": "no rows"})
+                    return
+                summary = ingest_rows(rows)
                 self._send(200, {"ok": True, **summary})
             except Exception as e:  # noqa: BLE001
                 self._send(500, {"ok": False, "error": str(e)})
