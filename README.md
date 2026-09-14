@@ -63,10 +63,33 @@ python scraper/pig333.py data/prices_snapshot.json
 
 ## Widget
 
-macOS NSPanel (always-on-top option), three columns per row: **flag + country**
-| **USD/kg** (tabular digits) | **observation** (source + basis, e.g.
-"Danis · Live", "AHDB · slaughterhouse price"). Data from the VPS backend,
-refreshed 2×/day. See `macos-widget/`.
+macOS NSPanel desktop widget — three columns per row: **flag + country** |
+**USD/kg** (tabular monospaced digits, green/red by week direction) |
+**observation** (source · basis, e.g. "Danis · Live", "LM_HG206 · cwt").
+Region sections (Europe / America / Asia / Africa), sorted by price.
+FATTENING PIGS only — per-head piglet rows are logged but not shown
+(not weight-comparable). Pig333 glitch detector: |variation| ≥ 50% is
+grayed with a ⚠︎ in the tooltip. Data from `https://pig.maytek.co/prices.json`,
+refreshed every 30 min.
+
+Build (SSD exFAT rule — always build from a /tmp copy):
+
+```bash
+cp -R macos-widget /tmp/pw && cd /tmp/pw && rm -f ._* PigWidget/._* Shared/._*
+xcodegen
+xcodebuild -project PigWidget.xcodeproj -scheme PigWidget \
+  -configuration Release -derivedDataPath build build
+cp -R build/Build/Products/Release/PigWidget.app /Applications/
+```
+
+`Shared/Secrets.swift` (gitignored) holds the token; generate it from
+`Shared/Secrets.swift.template`.
+
+## Web dashboard
+
+`https://pig.maytek.co` — login with the PIG_TOKEN key. Same data as the
+widget, flags rendered from bundled SVGs, plus collector health
+(last collector push).
 
 ## Considerations (deferred)
 
